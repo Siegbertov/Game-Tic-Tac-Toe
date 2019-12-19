@@ -2,6 +2,7 @@ from copy import deepcopy
 import numpy as np
 import pygame
 
+# ======================================================> COMMENT IT IF YOU WANT TO PLAY IN CONSOLE (call console_game)
 pygame.init()
 pygame.display.set_caption('TIC-TAC-TOE')
 logo = pygame.image.load("logo.png")
@@ -11,6 +12,34 @@ pygame.display.set_icon(logo)
 def quit_game():
     pygame.quit()
     quit()
+
+
+def console_game():
+    new = TTT()
+    print(new)
+
+    while new.run:
+        # ========================================================> YOUR MOVE
+        if not new.tie():
+            your_move = int(input(" ==> ")) - 1
+            new = new.make_move(your_move)
+            new.check_for_winner()
+        else:
+            new.run = False
+        # ========================================================> AI MOVE
+        if new.winner is None and not new.tie():
+            ai_move = new.best()
+            new = new.make_move(ai_move)
+            print(new)
+            new.check_for_winner()
+        else:
+            new.run = False
+
+    else:
+        if new.winner == None:
+            print("DRAW")
+        else:
+            print(str(new.winner) + " WON THE GAME")
 
 
 class Metadata:
@@ -329,4 +358,8 @@ def ai_loop():
         pygame.display.update()
 
 
-intro()
+# =================================================> COMMENT IT IF YOU WANT TO PLAY IN CONSOLE GAME (call console_game)
+intro() # GUI GAME
+
+# ============================================================> COMMENT IT IF YOU WANT TO PLAY IN GUI GAME (call intro)
+# console_game() # CONSOLE GAME
