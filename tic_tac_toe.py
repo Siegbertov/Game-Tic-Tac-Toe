@@ -265,7 +265,68 @@ def game_loop():
 
 
 def ai_loop():
-    pass
+    global pos_x, pos_y
+    new = TTT()
+
+    def draw_winning_screen():
+        text_font = pygame.font.Font("freesansbold.ttf", 30)
+
+        if new.winner == 1:
+            text = "YOU WIN"
+            new.WINDOW.fill(new.GREEN)
+
+        if new.winner == 2:
+            text = "YOU LOSE"
+            new.WINDOW.fill(new.RED)
+
+        if new.winner is None:
+            text = "DRAW"
+            new.WINDOW.fill(new.BLUE)
+
+        text_surf = text_font.render(text, True, new.BLACK)
+        text_rect = text_surf.get_rect()
+        text_rect.center = (new.D_WIDTH // 2, new.D_HEIGHT // 2)
+        new.WINDOW.blit(text_surf, text_rect)
+
+    while new.run:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                quit_game()
+
+            if event.type == pygame.MOUSEMOTION:
+                pos_x = event.pos[0]
+                pos_y = event.pos[1]
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    ai_loop()
+                if event.key == pygame.K_ESCAPE:
+                    intro()
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                r = pos_y//new.C_SIZE
+                c = pos_x//new.C_SIZE
+                pos = r * 3 + c
+                if  new.turn == 0 and new.winner is None:
+                    new = new.make_move(pos)
+                    new.turn += 1
+                    new.turn = new.turn % 2
+
+        if new.turn == 1 and new.winner is None:
+            best_pos = new.best()
+            if best_pos is not None:
+                new = new.make_move(best_pos)
+                new.turn += 1
+                new.turn = new.turn % 2
+                new.check_for_winner()
+
+        if new.winner is None and not new.tie():
+            new.WINDOW.fill(new.WHITE)
+            new.draw()
+        else:
+            draw_winning_screen()
+
+        pygame.display.update()
 
 
 intro()
